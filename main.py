@@ -1,87 +1,86 @@
 # Imports
-
-from skimage import io
-import matplotlib.pyplot as plt
 import numpy as np
+from skimage import io
 import os
 
 # Hyperparameters
-
 INPUT_PATH = 'input_data'
 OUTPUT_PATH = 'output_data'
 
+# Main function
 def create_kaleidoscopes():
 
-    # (1) Check data folder existence
+    # (1.0) Check input data folder existence
     if not os.path.exists(INPUT_PATH):
         print(f'Error: Input folder {INPUT_PATH} not found')
         input('\nPress Enter to exit...')
         return
     
+    # (1.1) Create output data folder if it doesn't exist
     if not os.path.exists(OUTPUT_PATH):
         os.makedirs(OUTPUT_PATH)
-        print(f'Created output folder: {OUTPUT_PATH}')  
+        print(f'Created output folder: {OUTPUT_PATH}')
 
-    # (2) Iterate through all jpg files
+    # (2) Iterate through all files
     for file_name in os.listdir(INPUT_PATH):
-
-        ### DEBUG ###
         print(f'⚙️  Processing file: {file_name}')
-        ### DEBUG ###
+        print(os.listdir(INPUT_PATH))
 
         try:
             file_path = os.path.join(INPUT_PATH, file_name)
-            img = io.imread(file_path)
+            img = io.imread(file_path)  
 
             # (2.1) Parameters
             height, width, _ = img.shape
-            cx, cy = width // 2, height // 2
-            name, _ = os.path.splitext(file_name)
+            half_height, half_width = height // 2, width // 2
+            name, extension = os.path.splitext(file_name)
 
-            # (2.2) Initializing base images
-            img_u2 = img[:cy, :, :]
-            img_d2 = img[cy:, : ,:] 
-            img_r2 = img[:, cx:, :]
-            img_l2 = img[:, :cx, :]
+            # (2.2) Initialize base images
+            img_2_u = img[:half_height, :, :]
+            img_2_d = img[half_height:, : ,:]
+            img_2_r = img[:, half_width:, :]
+            img_2_l = img[:, :half_width, :]
 
-            img_ul4 = img[:cy, :cx, :]
-            img_ur4 = img[:cy, cx:, :] 
-            img_dl4 = img[cy:, :cx, :]
-            img_dr4 = img[cy:, cx:, :]
+            img_4_ul = img[:half_height, :half_width, :]
+            img_4_ur = img[:half_height, half_width:, :]
+            img_4_dl = img[half_height:, :half_width, :]
+            img_4_dr = img[half_height:, half_width:, :]
 
-            # (2.3) Creating kaleidoscopes
-            img_u2_result = np.concatenate([img_u2, img_u2[::-1,:,:]] , axis=0)
-            img_d2_result = np.concatenate([img_d2[::-1,:,:], img_d2] , axis=0)
-            img_r2_result = np.concatenate([img_r2[:,::-1,:], img_r2] , axis=1)
-            img_l2_result = np.concatenate([img_l2, img_l2[:,::-1,:]] , axis=1)
+            # (2.3) Create kaleidoscopes
+            img_2_u_result = np.concatenate([img_2_u, img_2_u[::-1,:,:]] , axis=0)
+            img_2_d_result = np.concatenate([img_2_d[::-1,:,:], img_2_d] , axis=0)
+            img_2_r_result = np.concatenate([img_2_r[:,::-1,:], img_2_r] , axis=1)
+            img_2_l_result = np.concatenate([img_2_l, img_2_l[:,::-1,:]] , axis=1)
             
-            img_ul4_result = np.concatenate([np.concatenate([img_ul4[:,:,:],img_ul4[::-1,:,:]] , axis=0),\
-                                 np.concatenate([img_ul4[:,::-1,:],img_ul4[::-1,::-1,:]] , axis=0)], axis=1)
-            img_ur4_result = np.concatenate([np.concatenate([img_ur4[:,::-1,:],img_ur4[::-1,::-1,:]] , axis=0),\
-                                 np.concatenate([img_ur4[:,:,:],img_ur4[::-1,:,:]] , axis=0)], axis=1)
-            img_dl4_result = np.concatenate([np.concatenate([img_dl4[::-1,:,:],img_dl4[:,:,:]] , axis=0),\
-                                 np.concatenate([img_dl4[::-1,::-1,:],img_dl4[:,::-1,:]] , axis=0)], axis=1)
-            img_dr4_result = np.concatenate([np.concatenate([img_dr4[::-1,::-1,:],img_dr4[:,::-1,:]] , axis=0),\
-                                 np.concatenate([img_dr4[::-1,:,:],img_dr4[:,:,:]] , axis=0)], axis=1)
-            
-            # (2.4) Saving Results
-            plt.imsave(f"{OUTPUT_PATH}/{name}_U2.jpg", img_u2_result)
-            plt.imsave(f"{OUTPUT_PATH}/{name}_D2.jpg", img_d2_result)
-            plt.imsave(f"{OUTPUT_PATH}/{name}_L2.jpg", img_l2_result)
-            plt.imsave(f"{OUTPUT_PATH}/{name}_R2.jpg", img_r2_result)
+            img_4_ul_result = np.concatenate([np.concatenate([img_4_ul[:,:,:],img_4_ul[::-1,:,:]] , axis=0),\
+                                 np.concatenate([img_4_ul[:,::-1,:],img_4_ul[::-1,::-1,:]] , axis=0)], axis=1)
+            img_4_ur_result = np.concatenate([np.concatenate([img_4_ur[:,::-1,:],img_4_ur[::-1,::-1,:]] , axis=0),\
+                                 np.concatenate([img_4_ur[:,:,:],img_4_ur[::-1,:,:]] , axis=0)], axis=1)
+            img_4_dl_result = np.concatenate([np.concatenate([img_4_dl[::-1,:,:],img_4_dl[:,:,:]] , axis=0),\
+                                 np.concatenate([img_4_dl[::-1,::-1,:],img_4_dl[:,::-1,:]] , axis=0)], axis=1)
+            img_4_dr_result = np.concatenate([np.concatenate([img_4_dr[::-1,::-1,:],img_4_dr[:,::-1,:]] , axis=0),\
+                                 np.concatenate([img_4_dr[::-1,:,:],img_4_dr[:,:,:]] , axis=0)], axis=1)
 
-            plt.imsave(f"{OUTPUT_PATH}/{name}_UL4.jpg", img_ul4_result)
-            plt.imsave(f"{OUTPUT_PATH}/{name}_UR4.jpg", img_ur4_result)
-            plt.imsave(f"{OUTPUT_PATH}/{name}_DL4.jpg", img_dl4_result)
-            plt.imsave(f"{OUTPUT_PATH}/{name}_DR4.jpg", img_dr4_result)
+            # (2.4) Save Results
+            io.imsave(f"{OUTPUT_PATH}/{name}_2_U{extension}", img_2_u_result)
+            io.imsave(f"{OUTPUT_PATH}/{name}_2_D{extension}", img_2_d_result)
+            io.imsave(f"{OUTPUT_PATH}/{name}_2_L{extension}", img_2_l_result)
+            io.imsave(f"{OUTPUT_PATH}/{name}_2_R{extension}", img_2_r_result)
+
+            io.imsave(f"{OUTPUT_PATH}/{name}_4_UL{extension}", img_4_ul_result)
+            io.imsave(f"{OUTPUT_PATH}/{name}_4_UR{extension}", img_4_ur_result)
+            io.imsave(f"{OUTPUT_PATH}/{name}_4_DL{extension}", img_4_dl_result)
+            io.imsave(f"{OUTPUT_PATH}/{name}_4_DR{extension}", img_4_dr_result)
 
         except Exception as e:
-            print(f'Error processing {file_name}: {e}')
+            print(f'Error processing {file_name}: {e}')    
 
-    # (3) The end
+    # (3) Happy End
     print('✅ Image processing is completed!')
     input('\nPress Enter to exit...')
     return 
 
 if __name__ == '__main__':
     create_kaleidoscopes()
+
+print('Success')
