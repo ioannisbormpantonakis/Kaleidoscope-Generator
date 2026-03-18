@@ -1,4 +1,4 @@
-# Kaleigen v1.0
+# Kaleigen v1.0.2
 
 
 
@@ -40,4 +40,3 @@ You can download the standalone executable file (`kaleidoscope.exe`) from the **
 * **Python** (PSF License)
 * **NumPy** (BSD-3-Clause License)
 * **Scikit-Image** (BSD-3-Clause License)
-* **Matplotlib** (PSF License)
